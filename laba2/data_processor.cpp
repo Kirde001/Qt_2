@@ -9,7 +9,7 @@ void DataProcessor::processData(const QString &input, const QString &mode) {
         processedData = input.toLower();
     }
     else if (mode == "Обратный порядок") {
-        processedData = input; // Создаем копию
+        processedData = input;
         std::reverse(processedData.begin(), processedData.end());
     } else if (mode == "Удалить пробелы") {
         processedData = input;
