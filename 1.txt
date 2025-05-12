@@ -1,43 +1,61 @@
 по буквам лимит (5 символов), цифры пофиг; комбо - сделать двоеточия меж символами 
-
 #include "data_processor.h"
 #include <algorithm>
 #include <QString>
-#include <QChar> // Добавлено для проверки символов (хотя проверка на буквы теперь не нужна для лимита)
+#include <QChar>
+#include <QDebug> // Убедимся, что QDebug включен
 
 void DataProcessor::processData(const QString &input, const QString &mode) {
     QString processedData;
 
+    qDebug() << "DataProcessor: Received input:" << input << "with mode:" << mode; // Общий отладочный вывод
+
     if (mode == "В нижний регистр") {
         processedData = input.toLower();
+        qDebug() << "DataProcessor: Mode 'В нижний регистр', result:" << processedData;
     } else if (mode == "Обратный порядок") {
         processedData = input;
         std::reverse(processedData.begin(), processedData.end());
+        qDebug() << "DataProcessor: Mode 'Обратный порядок', result:" << processedData;
     } else if (mode == "Удалить пробелы") {
         processedData = input;
         processedData.remove(' ');
+        qDebug() << "DataProcessor: Mode 'Удалить пробелы', result:" << processedData;
     } else if (mode == "Лимит букв и двоеточия") { // --- НОВЫЙ РЕЖИМ (логика изменена) ---
+        qDebug() << "DataProcessor: Entering mode 'Лимит букв и двоеточия'";
         QString tempInput = input;
+        qDebug() << "DataProcessor: Initial tempInput:" << tempInput;
 
-        // --- Изменение: Применяем лимит 5 символов ко всему вводу, если длина больше 5 ---
+        // Применяем лимит 5 символов ко всему вводу, если длина больше 5
         if (tempInput.length() > 5) {
+            qDebug() << "DataProcessor: Input length > 5, applying limit.";
             tempInput = tempInput.left(5);
+            qDebug() << "DataProcessor: tempInput after limit:" << tempInput;
+        } else {
+            qDebug() << "DataProcessor: Input length <= 5, no limit applied.";
         }
-        // --- Конец изменения ---
 
-        // Вставляем двоеточия между символами (логика осталась прежней, применяется к tempInput после лимита)
+        // Вставляем двоеточия между символами
         processedData = ""; // Очищаем processedData
+        qDebug() << "DataProcessor: Starting colon insertion loop.";
         for (int i = 0; i < tempInput.length(); ++i) {
             processedData += tempInput.at(i);
+            qDebug() << "DataProcessor: Appended char:" << tempInput.at(i) << ", processedData so far:" << processedData;
             if (i < tempInput.length() - 1) {
                 processedData += ":";
+                qDebug() << "DataProcessor: Appended colon, processedData so far:" << processedData;
             }
         }
+        qDebug() << "DataProcessor: Colon insertion loop finished.";
+        qDebug() << "DataProcessor: Final processedData for mode 'Лимит букв и двоеточия':" << processedData;
 
     } else {
         // Режим по умолчанию или неизвестный режим
         processedData = input;
+        qDebug() << "DataProcessor: Unknown mode, result (input):" << processedData;
     }
 
     emit dataProcessed(processedData);
+    qDebug() << "DataProcessor: Signal dataProcessed emitted with result:" << processedData;
 }
+
